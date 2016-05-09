@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+	 <script type="text/javascript" src="js/jquery.event.drag-2.0.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+
+
+<script type="text/javascript" src="http://127.0.0.1:3000/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="scripts.js"></script>
+
+<style type="text/css">
+	#messageFormArea{
+		display: none;
+	}
+
+</style>
+</head>
+
+<body>
+	<div class="container" style="margin:60px;">
+	 <div id="userFormArea">
+	 	    	<form id="userForm">
+          		<div class="form-group">
+          			<label>entrer user</label>
+          			<input class="form-control" id="username"/>
+          			<input type="submit" class="btn btn-primary" value="login" />
+
+          		</div>
+
+          	</form>
+
+
+
+	 </div>
+
+  <article><!-- our canvas will be inserted here--></article>
+
+	  <div id="messageFormArea" class="row">
+          <div class="col-md-4">
+          	<div class="well">
+          		
+          		<h3>online users</h3>
+          		<ul class="list-group" id="chat-list"></ul>
+          	</div>
+
+          </div>	
+          <div class="col-md-8">
+          	<div class="chat" id="chat"></div>
+          	<form id="messageForm">
+          		<div class="form-group">
+          			<label>entrer message</label>
+          			<textarea class="form-control" id="message"></textarea>
+          			<input type="submit" class="btn btn-primary" value="send" />
+
+          		</div>
+
+          	</form>
+
+          </div>  	
+
+
+	  </div>
+		
+
+	</div>
+
+<video  src=""   id="video" width="3" height="3" autoplay="true" ></video>
+<canvas  id="preview"></canvas>
+<button id="button">ouvrir web cam</button>
+
+
+<img  id="play" >
+<div id="logger"></div>
+
+<script type="text/javascript" src="webcam.js"></script>
+
+	<script type="text/javascript">
+     $(function(){
+     	       var socket=io.connect('http://127.0.0.1:3000/');
+      var $messageFormArea=$('#messageFormArea');
+      var $messageForm=$('#messageForm');
+      var $message=$('#message');
+      var $chat=$('#chat');
+      var $users=$('#chat-list');
+      var $userFormArea=$('#userFormArea');
+      var $username=$('#username');
+      var $userForm=$('#userForm');
+        
+
+      
+
+
+      $messageForm.submit(function (e) {
+      	e.preventDefault();
+      	socket.emit('send message',$message.val())
+      	$message.val('');
+
+      });
+
+      $userForm.submit(function (e) {
+      	e.preventDefault();
+      	socket.emit('new user',$username.val(),function(data){
+            if (data) {
+             $userFormArea.hide();
+             $messageFormArea.show();
+            }
+
+      	});
+      	$username.val('');
+
+      });
+
+      socket.on('new message',function(data){
+        
+      	$chat.append('<div class="well"><strong>'+data.user+' : </stong>'+data.msg+'</div>');
+      });
+
+
+      socket.on('get users',function(data){   
+      	var html='';
+      	for (var i = 0; i < data.length; i++) {
+      		html+='<li class="list-group-item">'+data[i]+'</item>'
+      	}
+      	$users.html(html);
+      });
+
+    socket.on('stream',function (image) {
+
+    var img=document.getElementById('play');
+    img.src=image;
+    var log=document.getElementById('logger');
+   // log.text('image');
+
+   });   
+
+   
+     });
+     
+
+
+   
+
+	</script>
+
+ 
+</body>
+</html>

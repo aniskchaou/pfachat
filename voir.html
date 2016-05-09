@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="http://code.jquery.com/jquery-latest.min.js"
+        type="text/javascript"></script>
+<script type="text/javascript" src="http://127.0.0.1:3000/socket.io/socket.io.js/socket.io/socket.io.js"></script>
+</head>
+<body>
+<img width="500" height="500" id="play" >
+<div id="logger"></div>
+<script type="text/javascript">
+	
+      var socket=io("http://127.0.0.1:3000/");
+
+   socket.on('stream',function (image) {
+
+   	var img=document.getElementById('play');
+   	img.src=image;
+   	var log=document.getElementById('logger');
+   	log.text('image');
+
+   });
+
+
+
+</script>
+</body>
+</html>
